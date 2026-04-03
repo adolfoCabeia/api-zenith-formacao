@@ -1,11 +1,6 @@
 import { prisma } from '../config/prismaConfig.js';
 import { UploadService } from './upload.service.js';
-
-export enum StatusAluno {
-  PENDENTE = 'PENDENTE',
-  ATIVO = 'ATIVO',
-  INATIVO = 'INATIVO',
-}
+import { StatusAluno } from '../generated/prisma/enums.js';
 
 export interface AlunoData {
   nome: string;
@@ -35,12 +30,29 @@ type AlunoWithRelations = {
     id: string;
     diaSemana: string[];
     horario: string;
+    dataInicio: Date;
+    dataFim: Date;
+    capacidade: number;
+    cursoId: string;
+    createdAt: Date;
+    updatedAt: Date;
     curso: {
       id: string;
       nome: string;
+      preco: number;
+      criadoEm: Date;
+      atualizadoEm: Date;
     } | null;
   } | null;
-  pagamentos: any[];
+  pagamentos: Array<{
+    id: string;
+    alunoId: string;
+    valor: number;
+    status: string;
+    data: Date;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
 };
 
 class AlunoService {
@@ -81,7 +93,8 @@ class AlunoService {
       throw new Error('Comprovativo de pagamento é obrigatório');
     }
     
-    const statusValue: StatusAluno = data.status ?? StatusAluno.PENDENTE;
+    // CORREÇÃO: Usar o enum do Prisma diretamente
+    const statusValue = data.status ?? StatusAluno.PENDENTE;
     
     const aluno = await prisma.aluno.create({
       data: {
@@ -100,11 +113,12 @@ class AlunoService {
         pagamentos: true,
       },
     });
+
     return aluno as AlunoWithRelations;
   }
 
   async findAll(): Promise<AlunoWithRelations[]> {
-    return await prisma.aluno.findMany({
+    const alunos = await prisma.aluno.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
         turma: {
@@ -115,13 +129,15 @@ class AlunoService {
           take: 5,
         },
       },
-    }) as AlunoWithRelations[];
+    });
+
+    return alunos as AlunoWithRelations[];
   }
 
   async findById(id: string): Promise<AlunoWithRelations | null> {
     if (!id) throw new Error('ID não fornecido');
 
-    return await prisma.aluno.findUnique({
+    const aluno = await prisma.aluno.findUnique({
       where: { id },
       include: {
         turma: {
@@ -131,7 +147,9 @@ class AlunoService {
           orderBy: { createdAt: 'desc' },
         },
       },
-    }) as AlunoWithRelations | null;
+    });
+
+    return aluno as AlunoWithRelations | null;
   }
 
   async update(
@@ -193,7 +211,12 @@ class AlunoService {
 
     const deleted = await prisma.aluno.delete({
       where: { id },
-      include: { turma: { include: { curso: true } } },
+      include: { 
+        turma: { 
+          include: { curso: true } 
+        },
+        pagamentos: true
+      },
     });
 
     return deleted as AlunoWithRelations;
@@ -201,3 +224,5 @@ class AlunoService {
 }
 
 export default new AlunoService();
+
+export { StatusAluno };

@@ -1,4 +1,5 @@
 import AlunoService from '../../services/aluno.service.js';
+import { StatusAluno } from '../../generated/prisma/enums.js';
 
 const createResponse = (data: any, isError = false) => ({
   content: [
@@ -136,7 +137,7 @@ export const alunoTools = [
         },
         status: {
           type: 'string',
-          enum: ['PENDENTE', 'ATIVO', 'INATIVO'],
+          enum: ['PENDENTE', 'REJEITADO', 'APROVADO'],
           description: 'Status do aluno'
         },
       },
@@ -162,12 +163,20 @@ export const alunoTools = [
           return createResponse('Email inválido', true);
         }
 
-        const data: any = {
+        let statusEnum: StatusAluno | undefined;
+        if (input.status) {
+          const statusUpper = input.status.toUpperCase();
+          if (statusUpper === 'PENDENTE') statusEnum = StatusAluno.PENDENTE;
+          else if (statusUpper === 'REJEITADO') statusEnum = StatusAluno.REJEITADO;
+          else if (statusUpper === 'APROVADO') statusEnum = StatusAluno.APROVADO;
+        }
+
+        const data = {
           nome: input.nome.trim(),
           email: input.email.trim().toLowerCase(),
           telefone: input.telefone.trim(),
           turmaId: input.turmaId.trim(),
-          status: input.status || 'PENDENTE',
+          status: statusEnum, 
         };
 
         const files: any = {};
@@ -198,8 +207,6 @@ export const alunoTools = [
 
         const aluno = await AlunoService.create(data, files);
 
-        // CORREÇÃO DEFINITIVA: Verificar se turma existe antes de acessar
-        // O service agora retorna AlunoWithRelations que garante a propriedade turma
         const turmaNome = aluno.turma?.curso?.nome || 'Sem turma';
 
         return createResponse({
@@ -243,7 +250,7 @@ export const alunoTools = [
         },
         status: {
           type: 'string',
-          enum: ['PENDENTE', 'ATIVO', 'INATIVO'],
+          enum: ['PENDENTE', 'REJEITADO', 'APROVADO'],
         },
       },
       required: ['id'],
@@ -266,7 +273,13 @@ export const alunoTools = [
         }
         if (input.telefone?.trim()) updateData.telefone = input.telefone.trim();
         if (input.turmaId?.trim()) updateData.turmaId = input.turmaId.trim();
-        if (input.status) updateData.status = input.status;
+        
+        if (input.status) {
+          const statusUpper = input.status.toUpperCase();
+          if (statusUpper === 'PENDENTE') updateData.status = StatusAluno.PENDENTE;
+          else if (statusUpper === 'REJEITADO') updateData.status = StatusAluno.REJEITADO;
+          else if (statusUpper === 'APROVADO') updateData.status = StatusAluno.APROVADO;
+        }
 
         const files: any = {};
 
