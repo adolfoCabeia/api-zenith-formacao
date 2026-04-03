@@ -56,11 +56,11 @@ export const authTools = [
     },
     handler: async ({ nome, email, senha }: any) => {
       try {
-        const user = await AuthService.register(nome, email, senha);
+        const result = await AuthService.register(nome, email, senha);
         return {
           content: [{
             type: 'text',
-            text: `Usuário ${user.nome} registrado com sucesso! ID: ${user.id}`
+            text: `Usuário ${result.user.nome} registrado com sucesso! ID: ${result.user.id}`
           }]
         };
       } catch (error: any) {
@@ -90,8 +90,8 @@ export const authTools = [
         content: [{
           type: 'text',
           text: ctx.authenticated 
-            ? `🔐 Sessão ativa: ${ctx.email}`
-            : `🔓 Sessão anônima`
+            ? `Sessão ativa: ${ctx.email}`
+            : `Sessão anônima`
         }]
       };
     }
