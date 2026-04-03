@@ -15,7 +15,7 @@ const options = {
       },
     },
     servers: [
-      { url: "http://localhost:8000", description: "Servidor local" }
+      { url: "https://api-zenith-formacao.onrender.com", description: "Servidor local" }
     ],
   },
   apis: ["./src/routes/*.ts"], 
