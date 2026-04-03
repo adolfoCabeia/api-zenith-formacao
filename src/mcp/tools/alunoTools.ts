@@ -21,7 +21,7 @@ export const alunoTools = [
     name: 'listar_alunos',
     description: 'Lista todos os alunos cadastrados no sistema em formato legível',
     inputSchema: {
-      type: 'object',
+      type: 'object' as const,
       properties: {},
       required: [],
     },
@@ -63,7 +63,7 @@ export const alunoTools = [
     name: 'buscar_aluno',
     description: 'Busca um aluno específico pelo ID',
     inputSchema: {
-      type: 'object',
+      type: 'object' as const,
       properties: {
         id: {
           type: 'string',
@@ -108,7 +108,7 @@ export const alunoTools = [
     name: 'criar_aluno',
     description: 'Cria um novo aluno no sistema com upload de documentos',
     inputSchema: {
-      type: 'object',
+      type: 'object' as const,
       properties: {
         nome: {
           type: 'string',
@@ -197,7 +197,6 @@ export const alunoTools = [
         }
 
         const aluno = await AlunoService.create(data, files);
-
         return createResponse({
           success: true,
           message: `Aluno "${aluno.nome}" criado com sucesso!`,
@@ -219,7 +218,7 @@ export const alunoTools = [
     name: 'atualizar_aluno',
     description: 'Atualiza dados de um aluno existente',
     inputSchema: {
-      type: 'object',
+      type: 'object' as const,
       properties: {
         id: {
           type: 'string',
@@ -318,7 +317,7 @@ export const alunoTools = [
     name: 'deletar_aluno',
     description: 'Remove permanentemente um aluno do sistema',
     inputSchema: {
-      type: 'object',
+      type: 'object' as const,
       properties: {
         id: {
           type: 'string',

@@ -1,10 +1,9 @@
-import  { Router } from "express";
-import type { Request, Response, NextFunction } from "express";
+import type {  Request, Response, NextFunction} from "express";
+import { Router } from "express";
 import AlunoController from "../controllers/aluno.controller.js";
 import upload from "../middleware/upload.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
-// Interface estendida para Multer
 interface MulterRequest extends Request {
   files?: {
     biUrl?: Express.Multer.File[];
@@ -94,8 +93,13 @@ alunoRouter.post(
     { name: "biUrl", maxCount: 1 },
     { name: "comprovativoUrl", maxCount: 1 },
   ]),
-  (req: Request, res: Response, next: NextFunction) => {
-    AlunoController.createAluno(req as MulterRequest, res, next);
+  // CORREÇÃO: Wrapper function que chama o controller com os argumentos corretos
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await AlunoController.createAluno(req as MulterRequest, res);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
@@ -159,8 +163,6 @@ alunoRouter.get("/:id", authMiddleware, AlunoController.getAlunoById);
  */
 alunoRouter.delete("/:id", authMiddleware, AlunoController.deleteAluno);
 
-// Adicionar no fim do alunoRouter.ts
-
 /**
  * @swagger
  * /alunos/{id}:
@@ -207,8 +209,12 @@ alunoRouter.put(
     { name: "biUrl", maxCount: 1 },
     { name: "comprovativoUrl", maxCount: 1 },
   ]),
-  (req: Request, res: Response, next: NextFunction) => {
-    AlunoController.updateAluno(req as MulterRequest, res, next);
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await AlunoController.updateAluno(req as MulterRequest, res);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 

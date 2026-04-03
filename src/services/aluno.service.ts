@@ -58,7 +58,8 @@ class AlunoService {
       throw new Error('Comprovativo de pagamento é obrigatório');
     }
     
-    const statusValue: StatusAluno = data.status ?? StatusAluno.PENDENTE;
+    // CORREÇÃO: Garantir que status nunca é undefined usando ?? (nullish coalescing)
+    const statusFinal = data.status ?? StatusAluno.PENDENTE;
     
     const aluno = await prisma.aluno.create({
       data: {
@@ -68,7 +69,7 @@ class AlunoService {
         turmaId: data.turmaId,
         biUrl,
         comprovativoUrl,
-        status: statusValue,
+        status: statusFinal, // Agora é sempre StatusAluno, nunca undefined
       },
       include: {
         turma: {
