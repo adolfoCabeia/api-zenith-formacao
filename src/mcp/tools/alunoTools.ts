@@ -39,9 +39,11 @@ export const alunoTools = [
             }]
           };
         }
-        const lista = alunos.map((a, i) =>
-          `${i + 1}. ${a.nome} (${a.email}) - ${a.telefone} | Status: ${a.status} | Turma: ${a.turmaId || 'Sem turma'}`
-        ).join('\n');
+        
+        const lista = alunos.map((a, i) => {
+          const turmaNome = a.turma?.curso?.nome || 'Sem turma';
+          return `${i + 1}. ${a.nome} (${a.email}) - ${a.telefone} | Status: ${a.status} | Turma: ${turmaNome}`;
+        }).join('\n');
 
         const texto = `Alunos cadastrados (${alunos.length} total):\n\n${lista}`;
 
@@ -88,7 +90,7 @@ export const alunoTools = [
           email: aluno.email,
           telefone: aluno.telefone,
           status: aluno.status,
-          turma: aluno.turma?.nome || 'Sem turma',
+          turma: aluno.turma?.curso?.nome || 'Sem turma',
           biUrl: aluno.biUrl,
           comprovativoUrl: aluno.comprovativoUrl,
           createdAt: aluno.createdAt,
@@ -124,11 +126,11 @@ export const alunoTools = [
           type: 'string',
           description: 'ID da turma existente'
         },
-        biFile: {
+        biUrl: {
           type: 'string',
           description: 'Arquivo do BI em base64 (opcional)'
         },
-        comprovativoFile: {
+        comprovativoUrl: {
           type: 'string',
           description: 'Comprovativo de pagamento em base64 (opcional)'
         },
@@ -168,23 +170,33 @@ export const alunoTools = [
           status: input.status || 'ativo',
         };
 
-        if (input.biFile && input.biFile.trim() !== '') {
+        const files: any = {};
+
+        if (input.biUrl && input.biUrl.trim() !== '') {
           try {
-            data.biFile = Buffer.from(input.biFile, 'base64');
+            files.biUrl = [{
+              buffer: Buffer.from(input.biUrl, 'base64'),
+              originalname: 'bi.pdf',
+              mimetype: 'application/pdf'
+            }];
           } catch (e) {
             return createResponse('Arquivo BI inválido (deve ser base64)', true);
           }
         }
 
-        if (input.comprovativoFile && input.comprovativoFile.trim() !== '') {
+        if (input.comprovativoUrl && input.comprovativoUrl.trim() !== '') {
           try {
-            data.comprovativoFile = Buffer.from(input.comprovativoFile, 'base64');
+            files.comprovativoUrl = [{
+              buffer: Buffer.from(input.comprovativoUrl, 'base64'),
+              originalname: 'comprovativo.pdf',
+              mimetype: 'application/pdf'
+            }];
           } catch (e) {
             return createResponse('Comprovativo inválido (deve ser base64)', true);
           }
         }
 
-        const aluno = await AlunoService.create(data);
+        const aluno = await AlunoService.create(data, files);
 
         return createResponse({
           success: true,
@@ -193,7 +205,7 @@ export const alunoTools = [
             id: aluno.id,
             nome: aluno.nome,
             email: aluno.email,
-            turma: aluno.turma?.nome,
+            turma: aluno.turma?.curso?.nome,
             status: aluno.status,
           },
         });
@@ -217,11 +229,11 @@ export const alunoTools = [
         email: { type: 'string' },
         telefone: { type: 'string' },
         turmaId: { type: 'string' },
-        biFile: {
+        biUrl: {
           type: 'string',
           description: 'Novo BI em base64 (opcional)'
         },
-        comprovativoFile: {
+        comprovativoUrl: {
           type: 'string',
           description: 'Novo comprovativo em base64 (opcional)'
         },
@@ -252,27 +264,37 @@ export const alunoTools = [
         if (input.turmaId?.trim()) updateData.turmaId = input.turmaId.trim();
         if (input.status) updateData.status = input.status;
 
-        if (input.biFile && input.biFile.trim() !== '') {
+        const files: any = {};
+
+        if (input.biUrl && input.biUrl.trim() !== '') {
           try {
-            updateData.biFile = Buffer.from(input.biFile, 'base64');
+            files.biUrl = [{
+              buffer: Buffer.from(input.biUrl, 'base64'),
+              originalname: 'bi.pdf',
+              mimetype: 'application/pdf'
+            }];
           } catch (e) {
             return createResponse('Arquivo BI inválido', true);
           }
         }
 
-        if (input.comprovativoFile && input.comprovativoFile.trim() !== '') {
+        if (input.comprovativoUrl && input.comprovativoUrl.trim() !== '') {
           try {
-            updateData.comprovativoFile = Buffer.from(input.comprovativoFile, 'base64');
+            files.comprovativoUrl = [{
+              buffer: Buffer.from(input.comprovativoUrl, 'base64'),
+              originalname: 'comprovativo.pdf',
+              mimetype: 'application/pdf'
+            }];
           } catch (e) {
             return createResponse('Comprovativo inválido', true);
           }
         }
 
-        if (Object.keys(updateData).length === 0) {
+        if (Object.keys(updateData).length === 0 && Object.keys(files).length === 0) {
           return createResponse('Nenhum dado fornecido para atualização', true);
         }
 
-        const aluno = await AlunoService.update(input.id, updateData);
+        const aluno = await AlunoService.update(input.id, updateData, files);
 
         return createResponse({
           success: true,
@@ -281,7 +303,7 @@ export const alunoTools = [
             id: aluno.id,
             nome: aluno.nome,
             email: aluno.email,
-            turma: aluno.turma?.nome,
+            turma: aluno.turma?.curso?.nome,
             status: aluno.status,
             updatedAt: aluno.updatedAt,
           },

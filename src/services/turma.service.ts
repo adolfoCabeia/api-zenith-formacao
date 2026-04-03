@@ -37,36 +37,40 @@ function validarDias(dias: string[]) {
 
 class TurmaService {
   async create(data: TurmaData) {
-  if (
-    !data.cursoId ||
-    !data.diaSemana ||
-    !data.horario ||
-    !data.dataInicio ||
-    !data.dataFim ||
-    data.capacidade === undefined
-  ) {
-    throw new Error("Todos os campos da turma são obrigatórios");
+    if (
+      !data.cursoId ||
+      !data.diaSemana ||
+      !data.horario ||
+      !data.dataInicio ||
+      !data.dataFim ||
+      data.capacidade === undefined
+    ) {
+      throw new Error("Todos os campos da turma são obrigatórios");
+    }
+
+    const curso = await prisma.curso.findUnique({
+      where: { id: data.cursoId }
+    });
+
+    if (!curso) throw new Error("Curso não encontrado");
+
+    const turma = await prisma.turma.create({
+      data: {
+        cursoId: data.cursoId,
+        diaSemana: validarDias(data.diaSemana), 
+        horario: data.horario,
+        dataInicio: new Date(data.dataInicio),
+        dataFim: new Date(data.dataFim),
+        capacidade: data.capacidade,
+      },
+      include: {
+        curso: true,
+        alunos: true
+      }
+    });
+
+    return turma;
   }
-
-  const curso = await prisma.curso.findUnique({
-    where: { id: data.cursoId }
-  });
-
-  if (!curso) throw new Error("Curso não encontrado");
-
-  const turma = await prisma.turma.create({
-    data: {
-      cursoId: data.cursoId,
-      diaSemana: validarDias(data.diaSemana), 
-      horario: data.horario,
-      dataInicio: new Date(data.dataInicio),
-      dataFim: new Date(data.dataFim),
-      capacidade: data.capacidade,
-    },
-  });
-
-  return turma;
-}
 
   async findAll() {
     return await prisma.turma.findMany({
@@ -89,12 +93,21 @@ class TurmaService {
         ...data,
         dataInicio: data.dataInicio ? new Date(data.dataInicio) : undefined,
         dataFim: data.dataFim ? new Date(data.dataFim) : undefined,
+      },
+      include: {
+        curso: true,
+        alunos: true
       }
     });
   }
 
   async delete(id: string) {
-    return await prisma.turma.delete({ where: { id } });
+    return await prisma.turma.delete({ 
+      where: { id },
+      include: {
+        curso: true
+      }
+    });
   }
 }
 

@@ -1,7 +1,16 @@
-import { Router } from "express";
+import  { Router } from "express";
+import type { Request, Response, NextFunction } from "express";
 import AlunoController from "../controllers/aluno.controller.js";
 import upload from "../middleware/upload.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+
+// Interface estendida para Multer
+interface MulterRequest extends Request {
+  files?: {
+    biUrl?: Express.Multer.File[];
+    comprovativoUrl?: Express.Multer.File[];
+  };
+}
 
 const alunoRouter = Router();
 
@@ -85,7 +94,9 @@ alunoRouter.post(
     { name: "biUrl", maxCount: 1 },
     { name: "comprovativoUrl", maxCount: 1 },
   ]),
-  AlunoController.createAluno
+  (req: Request, res: Response, next: NextFunction) => {
+    AlunoController.createAluno(req as MulterRequest, res, next);
+  }
 );
 
 /**
@@ -104,7 +115,7 @@ alunoRouter.post(
  *               items:
  *                 $ref: '#/components/schemas/Aluno'
  */
-alunoRouter.get("/", authMiddleware ,AlunoController.getAllAlunos);
+alunoRouter.get("/", authMiddleware, AlunoController.getAllAlunos);
 
 /**
  * @swagger
@@ -128,7 +139,7 @@ alunoRouter.get("/", authMiddleware ,AlunoController.getAllAlunos);
  *       404:
  *         description: Aluno não encontrado
  */
-alunoRouter.get("/:id", authMiddleware,AlunoController.getAlunoById);
+alunoRouter.get("/:id", authMiddleware, AlunoController.getAlunoById);
 
 /**
  * @swagger
@@ -146,7 +157,7 @@ alunoRouter.get("/:id", authMiddleware,AlunoController.getAlunoById);
  *       200:
  *         description: Aluno removido com sucesso
  */
-alunoRouter.delete("/:id", authMiddleware,AlunoController.deleteAluno);
+alunoRouter.delete("/:id", authMiddleware, AlunoController.deleteAluno);
 
 // Adicionar no fim do alunoRouter.ts
 
@@ -196,6 +207,9 @@ alunoRouter.put(
     { name: "biUrl", maxCount: 1 },
     { name: "comprovativoUrl", maxCount: 1 },
   ]),
-  AlunoController.updateAluno
+  (req: Request, res: Response, next: NextFunction) => {
+    AlunoController.updateAluno(req as MulterRequest, res, next);
+  }
 );
+
 export default alunoRouter;

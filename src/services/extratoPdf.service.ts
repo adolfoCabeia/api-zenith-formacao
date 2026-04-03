@@ -1,67 +1,65 @@
-import PDFDocument from 'pdfkit';
-import fs from 'fs';
-import path from 'path';
-import { prisma } from '../config/prismaConfig.js';
+declare module 'pdfkit' {
+  import { Readable } from 'stream';
 
-interface ExtratoOptions {
-  tipo: 'alunos' | 'pagamentos';
-  alunoId?: string;
-}
-
-class ExtratoService {
-  async gerarPDF(options: ExtratoOptions): Promise<string> {
-    const doc = new PDFDocument();
-
-    const filePath = path.join('temp', `extrato-${Date.now()}.pdf`);
-
-    fs.mkdirSync('temp', { recursive: true });
-
-    doc.pipe(fs.createWriteStream(filePath));
-
-    doc.fontSize(18).text('Extrato - Centro de Formação', { align: 'center' });
-    doc.moveDown();
-
-    if (options.tipo === 'alunos') {
-      const alunos = await prisma.aluno.findMany({
-        include: { turma: true }
-      });
-
-      if (alunos.length === 0) {
-        doc.text('Não há alunos cadastrados.');
-      } else {
-        alunos.forEach((aluno, i) => {
-          doc.text(
-            `${i + 1}. ${aluno.nome} | ${aluno.email} | Turma: ${aluno.turma?.diaSemana}`
-          );
-        });
-      }
-    }
-
-    if (options.tipo === 'pagamentos') {
-      const pagamentos = options.alunoId
-        ? await prisma.pagamento.findMany({
-            where: { alunoId: options.alunoId },
-            include: { aluno: true }
-          })
-        : await prisma.pagamento.findMany({
-            include: { aluno: true }
-          });
-
-      if (pagamentos.length === 0) {
-        doc.text('Não há pagamentos registrados.');
-      } else {
-        pagamentos.forEach((pag, i) => {
-          doc.text(
-            `${i + 1}. ${pag.aluno.nome} | Valor: ${pag.valor} | Status: ${pag.status}`
-          );
-        });
-      }
-    }
-
-    doc.end();
-
-    return filePath;
+  interface PDFDocumentOptions {
+    size?: string | [number, number];
+    margin?: number;
+    margins?: { top: number; bottom: number; left: number; right: number };
+    layout?: 'portrait' | 'landscape';
+    [key: string]: any;
   }
-}
 
-export default new ExtratoService();
+  interface TextOptions {
+    align?: 'left' | 'center' | 'right' | 'justify';
+    width?: number;
+    height?: number;
+    columns?: number;
+    columnGap?: number;
+    indent?: number;
+    paragraphGap?: number;
+    lineGap?: number;
+    wordSpacing?: number;
+    characterSpacing?: number;
+    fill?: boolean;
+    stroke?: boolean;
+    link?: string;
+    underline?: boolean;
+    strike?: boolean;
+    continued?: boolean;
+    [key: string]: any;
+  }
+
+  class PDFDocument extends Readable {
+    constructor(options?: PDFDocumentOptions);
+    text(text: string, x?: number, y?: number, options?: TextOptions): this;
+    text(text: string, options?: TextOptions): this;
+    fontSize(size: number): this;
+    font(font: string): this;
+    moveDown(lines?: number): this;
+    moveUp(lines?: number): this;
+    moveTo(x: number, y: number): this;
+    lineTo(x: number, y: number): this;
+    stroke(): this;
+    fill(): this;
+    image(src: string | Buffer, x?: number, y?: number, options?: any): this;
+    pipe<T extends NodeJS.WritableStream>(destination: T, options?: { end?: boolean }): T;
+    end(): void;
+    save(): this;
+    restore(): this;
+    scale(x: number, y?: number): this;
+    rotate(angle: number, options?: { origin?: [number, number] }): this;
+    translate(x: number, y: number): this;
+    info: {
+      Title?: string;
+      Author?: string;
+      Subject?: string;
+      Keywords?: string;
+      CreationDate?: Date;
+      ModDate?: Date;
+      Creator?: string;
+      Producer?: string;
+    };
+  }
+
+  export = PDFDocument;
+}

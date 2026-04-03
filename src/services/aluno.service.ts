@@ -57,6 +57,7 @@ class AlunoService {
     } else {
       throw new Error('Comprovativo de pagamento é obrigatório');
     }
+    
     const aluno = await prisma.aluno.create({
       data: {
         nome: data.nome,
@@ -65,7 +66,7 @@ class AlunoService {
         turmaId: data.turmaId,
         biUrl,
         comprovativoUrl,
-        status: data.status || StatusAluno.PENDENTE,
+        status: data.status ?? StatusAluno.PENDENTE, 
       },
       include: {
         turma: {
@@ -147,6 +148,7 @@ class AlunoService {
       },
     });
   }
+  
   async delete(id: string) {
     const aluno = await prisma.aluno.findUnique({ where: { id } });
     if (!aluno) {

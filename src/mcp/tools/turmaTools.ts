@@ -34,11 +34,13 @@ export const turmaTools = [
                         }]
                     };
                 }
-                const lista = turmas.map((t, i) =>
-                    `${i + 1}. ${t.curso?.nome || 'Curso não definido'} | ${t.diaSemana} às ${t.horario} | ` +
-                    `Início: ${new Date(t.dataInicio).toLocaleDateString('pt-PT')} | ` +
-                    `Capacidade: ${t.capacidade} alunos (ID: ${t.id})`
-                ).join('\n');
+                
+                const lista = turmas.map((t, i) => {
+                    const cursoNome = t.curso?.nome || 'Curso não definido';
+                    return `${i + 1}. ${cursoNome} | ${t.diaSemana.join(', ')} às ${t.horario} | ` +
+                        `Início: ${new Date(t.dataInicio).toLocaleDateString('pt-PT')} | ` +
+                        `Capacidade: ${t.capacidade} alunos (ID: ${t.id})`;
+                }).join('\n');
 
                 const texto = `Turmas disponíveis (${turmas.length} total):\n\n${lista}`;
 
@@ -79,14 +81,17 @@ export const turmaTools = [
                     return createResponse(`Turma com ID "${input.id}" não encontrada`, true);
                 }
 
+                const cursoNome = turma.curso?.nome || 'N/A';
+                const alunosCount = turma.alunos?.length || 0;
+
                 const texto = `Detalhes da turma:\n\n` +
-                    `Curso: ${turma.curso?.nome || 'N/A'}\n` +
-                    `Dia: ${turma.diaSemana}\n` +
+                    `Curso: ${cursoNome}\n` +
+                    `Dia: ${turma.diaSemana.join(', ')}\n` +
                     `Horário: ${turma.horario}\n` +
                     `Início: ${new Date(turma.dataInicio).toLocaleDateString('pt-PT')}\n` +
                     `Fim: ${new Date(turma.dataFim).toLocaleDateString('pt-PT')}\n` +
                     `Capacidade: ${turma.capacidade} alunos\n` +
-                    `Alunos matriculados: ${turma.alunos?.length || 0}\n` +
+                    `Alunos matriculados: ${alunosCount}\n` +
                     `ID: ${turma.id}`;
 
                 return {
@@ -156,8 +161,8 @@ export const turmaTools = [
                     return createResponse('ID do curso é obrigatório', true);
                 }
 
-                if (!input.diaSemana?.trim()) {
-                    return createResponse('Dia da semana é obrigatório', true);
+                if (!input.diaSemana || !Array.isArray(input.diaSemana) || input.diaSemana.length === 0) {
+                    return createResponse('Dia da semana é obrigatório (array)', true);
                 }
 
                 if (!input.horario?.trim()) {
@@ -178,16 +183,18 @@ export const turmaTools = [
 
                 const turma = await TurmaService.create({
                     cursoId: input.cursoId.trim(),
-                    diaSemana: input.diaSemana.trim(),
+                    diaSemana: input.diaSemana,
                     horario: input.horario.trim(),
                     dataInicio: new Date(input.dataInicio),
                     dataFim: new Date(input.dataFim),
                     capacidade: input.capacidade
                 });
 
+                const cursoNome = turma.curso?.nome || 'N/A';
+
                 const texto = `✅ Turma criada com sucesso!\n\n` +
-                    `Curso: ${turma.curso?.nome || 'N/A'}\n` +
-                    `Dia: ${turma.diaSemana} às ${turma.horario}\n` +
+                    `Curso: ${cursoNome}\n` +
+                    `Dia: ${turma.diaSemana.join(', ')} às ${turma.horario}\n` +
                     `Período: ${new Date(turma.dataInicio).toLocaleDateString('pt-PT')} a ${new Date(turma.dataFim).toLocaleDateString('pt-PT')}\n` +
                     `Capacidade: ${turma.capacidade} alunos\n` +
                     `ID: ${turma.id}`;
@@ -219,8 +226,9 @@ export const turmaTools = [
                     description: 'Novo ID do curso'
                 },
                 diaSemana: {
-                    type: 'string',
-                    description: 'Novo dia da semana'
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Novos dias da semana'
                 },
                 horario: {
                     type: 'string',
@@ -253,7 +261,7 @@ export const turmaTools = [
                 const updateData: any = {};
 
                 if (input.cursoId?.trim()) updateData.cursoId = input.cursoId.trim();
-                if (input.diaSemana?.trim()) updateData.diaSemana = input.diaSemana.trim();
+                if (input.diaSemana?.length) updateData.diaSemana = input.diaSemana;
                 if (input.horario?.trim()) updateData.horario = input.horario.trim();
                 if (input.dataInicio) updateData.dataInicio = new Date(input.dataInicio);
                 if (input.dataFim) updateData.dataFim = new Date(input.dataFim);
@@ -270,9 +278,11 @@ export const turmaTools = [
 
                 const turma = await TurmaService.update(input.id, updateData);
 
-                const texto = `✅ Turma atualizada com sucesso!\n\n` +
-                    `Curso: ${turma.curso?.nome || 'N/A'}\n` +
-                    `Dia: ${turma.diaSemana} às ${turma.horario}\n` +
+                const cursoNome = turma.curso?.nome || 'N/A';
+
+                const texto = `Turma atualizada com sucesso!\n\n` +
+                    `Curso: ${cursoNome}\n` +
+                    `Dia: ${turma.diaSemana.join(', ')} às ${turma.horario}\n` +
                     `Período: ${new Date(turma.dataInicio).toLocaleDateString('pt-PT')} a ${new Date(turma.dataFim).toLocaleDateString('pt-PT')}\n` +
                     `Capacidade: ${turma.capacidade} alunos\n` +
                     `ID: ${turma.id}`;
@@ -313,12 +323,14 @@ export const turmaTools = [
                     return createResponse(`Turma com ID "${input.id}" não encontrada`, true);
                 }
 
+                const cursoNome = existing.curso?.nome || 'N/A';
+
                 await TurmaService.delete(input.id);
 
                 return {
                     content: [{
                         type: 'text',
-                        text: `Turma de ${existing.curso?.nome || 'N/A'} (${existing.diaSemana} às ${existing.horario}) deletada com sucesso.`
+                        text: `Turma de ${cursoNome} (${existing.diaSemana.join(', ')} às ${existing.horario}) deletada com sucesso.`
                     }]
                 };
             } catch (error) {

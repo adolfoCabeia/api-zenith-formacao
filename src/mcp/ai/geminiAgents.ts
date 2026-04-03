@@ -2,7 +2,7 @@ import { genAI, convertToGeminiTools } from './geminiClient.js';
 import { MCPClient } from '../client.js';
 
 export class GeminiAgent {
-  private mcpClient: MCPClient;
+  private mcpClient!: MCPClient;
   private model: any;
   private tools: any[] = [];
   private serverPath: string;
@@ -79,8 +79,6 @@ export class GeminiAgent {
         };
       })
     );
-
-
 
     const finalResult = await chat.sendMessage(functionResponses);
     return finalResult.response.text();

@@ -22,7 +22,7 @@ class PagamentoController {
 
   async findById(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const pagamento = await PagamentoService.findById(id);
       return res.json(pagamento);
     } catch (error: any) {
@@ -32,7 +32,7 @@ class PagamentoController {
 
   async update(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const pagamento = await PagamentoService.update(id, req.body);
       return res.json({ message: "Pagamento atualizado com sucesso", pagamento });
     } catch (error: any) {
@@ -42,7 +42,7 @@ class PagamentoController {
 
   async delete(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       await PagamentoService.delete(id);
       return res.json({ message: "Pagamento removido com sucesso" });
     } catch (error: any) {

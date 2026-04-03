@@ -24,7 +24,8 @@ class TurmaController {
 
   async getTurmaById(req: Request, res: Response) {
     try {
-      const turma = await turmaService.findById(req.params.id);
+      const id = req.params.id as string;
+      const turma = await turmaService.findById(id);
       if (!turma) return res.status(404).json({ message: "Turma não encontrada" });
       res.status(200).json(turma);
     } catch (error: any) {
@@ -35,7 +36,8 @@ class TurmaController {
 
   async updateTurma(req: Request, res: Response) {
     try {
-      const turma = await turmaService.update(req.params.id, req.body);
+      const id = req.params.id as string;
+      const turma = await turmaService.update(id, req.body);
       res.status(200).json({ message: "Turma atualizada com sucesso", dados: turma });
     } catch (error: any) {
       console.log(error.message);
@@ -45,7 +47,8 @@ class TurmaController {
 
   async deleteTurma(req: Request, res: Response) {
     try {
-      await turmaService.delete(req.params.id);
+      const id = req.params.id as string;
+      await turmaService.delete(id);
       res.status(200).json({ message: "Turma removida com sucesso" });
     } catch (error: any) {
       console.log(error.message);
