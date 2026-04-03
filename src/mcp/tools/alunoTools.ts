@@ -43,7 +43,7 @@ export const alunoTools = [
         
         const lista = alunos.map((a, i) => {
           const turmaNome = a.turma?.curso?.nome || 'Sem turma';
-          return `${i + 1}. ${a.nome} (${a.email}) - ${a.telefone} | Status: ${a.status} | Turma: ${turmaNome}`;
+          return `${i + 1}. ${a.nome} (${a.email}) - ${a.telefone} | Status: ${a.status} | Turma: ${turmaNome} | ID:(${a.id})`;
         }).join('\n');
 
         const texto = `Alunos cadastrados (${alunos.length} total):\n\n${lista}`;
