@@ -20,8 +20,31 @@ export interface AlunoFiles {
   comprovativoUrl?: Express.Multer.File[];
 }
 
+type AlunoWithRelations = {
+  id: string;
+  email: string;
+  nome: string;
+  telefone: string;
+  biUrl: string;
+  comprovativoUrl: string;
+  turmaId: string;
+  status: StatusAluno;
+  createdAt: Date;
+  updatedAt: Date;
+  turma: {
+    id: string;
+    diaSemana: string[];
+    horario: string;
+    curso: {
+      id: string;
+      nome: string;
+    } | null;
+  } | null;
+  pagamentos: any[];
+};
+
 class AlunoService {
-  async create(data: AlunoData, files: AlunoFiles) {
+  async create(data: AlunoData, files: AlunoFiles): Promise<AlunoWithRelations> {
     if (!data.nome || !data.email || !data.telefone || !data.turmaId) {
       throw new Error('Todos os campos obrigatórios devem ser preenchidos');
     }
@@ -58,8 +81,7 @@ class AlunoService {
       throw new Error('Comprovativo de pagamento é obrigatório');
     }
     
-    // CORREÇÃO: Garantir que status nunca é undefined usando ?? (nullish coalescing)
-    const statusFinal = data.status ?? StatusAluno.PENDENTE;
+    const statusValue: StatusAluno = data.status ?? StatusAluno.PENDENTE;
     
     const aluno = await prisma.aluno.create({
       data: {
@@ -69,7 +91,7 @@ class AlunoService {
         turmaId: data.turmaId,
         biUrl,
         comprovativoUrl,
-        status: statusFinal, // Agora é sempre StatusAluno, nunca undefined
+        status: statusValue,
       },
       include: {
         turma: {
@@ -78,11 +100,10 @@ class AlunoService {
         pagamentos: true,
       },
     });
-
-    return aluno;
+    return aluno as AlunoWithRelations;
   }
 
-  async findAll() {
+  async findAll(): Promise<AlunoWithRelations[]> {
     return await prisma.aluno.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -94,10 +115,10 @@ class AlunoService {
           take: 5,
         },
       },
-    });
+    }) as AlunoWithRelations[];
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<AlunoWithRelations | null> {
     if (!id) throw new Error('ID não fornecido');
 
     return await prisma.aluno.findUnique({
@@ -110,14 +131,14 @@ class AlunoService {
           orderBy: { createdAt: 'desc' },
         },
       },
-    });
+    }) as AlunoWithRelations | null;
   }
 
   async update(
     id: string,
     data: Partial<AlunoData>,
     files?: AlunoFiles
-  ) {
+  ): Promise<AlunoWithRelations> {
     const alunoExistente = await prisma.aluno.findUnique({ where: { id } });
     if (!alunoExistente) {
       throw new Error('Aluno não encontrado');
@@ -142,7 +163,7 @@ class AlunoService {
       );
     }
 
-    return await prisma.aluno.update({
+    const aluno = await prisma.aluno.update({
       where: { id },
       data: updateData,
       include: {
@@ -150,9 +171,11 @@ class AlunoService {
         pagamentos: true,
       },
     });
+
+    return aluno as AlunoWithRelations;
   }
   
-  async delete(id: string) {
+  async delete(id: string): Promise<AlunoWithRelations> {
     const aluno = await prisma.aluno.findUnique({ where: { id } });
     if (!aluno) {
       throw new Error('Aluno não encontrado');
@@ -168,10 +191,12 @@ class AlunoService {
       where: { alunoId: id },
     });
 
-    return await prisma.aluno.delete({
+    const deleted = await prisma.aluno.delete({
       where: { id },
-      include: { turma: true },
+      include: { turma: { include: { curso: true } } },
     });
+
+    return deleted as AlunoWithRelations;
   }
 }
 

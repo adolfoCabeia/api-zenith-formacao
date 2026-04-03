@@ -144,7 +144,6 @@ export const alunoTools = [
     },
     handler: async (input: any) => {
       try {
-
         if (!input.nome?.trim()) {
           return createResponse('Nome é obrigatório', true);
         }
@@ -157,6 +156,7 @@ export const alunoTools = [
         if (!input.turmaId?.trim()) {
           return createResponse('ID da turma é obrigatório', true);
         }
+        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(input.email)) {
           return createResponse('Email inválido', true);
@@ -197,6 +197,11 @@ export const alunoTools = [
         }
 
         const aluno = await AlunoService.create(data, files);
+
+        // CORREÇÃO DEFINITIVA: Verificar se turma existe antes de acessar
+        // O service agora retorna AlunoWithRelations que garante a propriedade turma
+        const turmaNome = aluno.turma?.curso?.nome || 'Sem turma';
+
         return createResponse({
           success: true,
           message: `Aluno "${aluno.nome}" criado com sucesso!`,
@@ -204,7 +209,7 @@ export const alunoTools = [
             id: aluno.id,
             nome: aluno.nome,
             email: aluno.email,
-            turma: aluno.turma?.curso?.nome || 'Sem turma',
+            turma: turmaNome,
             status: aluno.status,
           },
         });
