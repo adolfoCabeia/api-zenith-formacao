@@ -55,7 +55,7 @@ pagamentoRouter.use(authMiddleware)
  *               items:
  *                 $ref: '#/components/schemas/Pagamento'
  */
-pagamentoRouter.get("/read", PagamentoController.findAll);
+pagamentoRouter.get("/", PagamentoController.findAll);
 
 /**
  * @swagger
@@ -80,7 +80,7 @@ pagamentoRouter.get("/read", PagamentoController.findAll);
  *       404:
  *         description: Pagamento não encontrado
  */
-pagamentoRouter.get("/read/:id", PagamentoController.findById);
+pagamentoRouter.get("/:id", PagamentoController.findById);
 
 /**
  * @swagger
@@ -98,7 +98,7 @@ pagamentoRouter.get("/read/:id", PagamentoController.findById);
  *       201:
  *         description: Pagamento criado com sucesso
  */
-pagamentoRouter.post("/create", PagamentoController.create);
+pagamentoRouter.post("/", PagamentoController.create);
 
 /**
  * @swagger
@@ -123,7 +123,7 @@ pagamentoRouter.post("/create", PagamentoController.create);
  *       200:
  *         description: Pagamento atualizado com sucesso
  */
-pagamentoRouter.put("/update/:id", PagamentoController.update);
+pagamentoRouter.put("/:id", PagamentoController.update);
 
 /**
  * @swagger
@@ -142,6 +142,6 @@ pagamentoRouter.put("/update/:id", PagamentoController.update);
  *       200:
  *         description: Pagamento deletado com sucesso
  */
-pagamentoRouter.delete("/delete/:id", PagamentoController.delete);
+pagamentoRouter.delete("/:id", PagamentoController.delete);
 
 export default pagamentoRouter;
