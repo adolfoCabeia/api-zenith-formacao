@@ -136,7 +136,7 @@ export const alunoTools = [
         },
         status: {
           type: 'string',
-          enum: ['ativo', 'inativo', 'pendente'],
+          enum: ['PENDENTE', 'ATIVO', 'INATIVO'],
           description: 'Status do aluno'
         },
       },
@@ -167,7 +167,7 @@ export const alunoTools = [
           email: input.email.trim().toLowerCase(),
           telefone: input.telefone.trim(),
           turmaId: input.turmaId.trim(),
-          status: input.status || 'ativo',
+          status: input.status || 'PENDENTE',
         };
 
         const files: any = {};
@@ -205,7 +205,7 @@ export const alunoTools = [
             id: aluno.id,
             nome: aluno.nome,
             email: aluno.email,
-            turma: aluno.turma?.curso?.nome,
+            turma: aluno.turma?.curso?.nome || 'Sem turma',
             status: aluno.status,
           },
         });
@@ -239,7 +239,7 @@ export const alunoTools = [
         },
         status: {
           type: 'string',
-          enum: ['ativo', 'inativo', 'pendente'],
+          enum: ['PENDENTE', 'ATIVO', 'INATIVO'],
         },
       },
       required: ['id'],
@@ -303,7 +303,7 @@ export const alunoTools = [
             id: aluno.id,
             nome: aluno.nome,
             email: aluno.email,
-            turma: aluno.turma?.curso?.nome,
+            turma: aluno.turma?.curso?.nome || 'Sem turma',
             status: aluno.status,
             updatedAt: aluno.updatedAt,
           },

@@ -82,7 +82,7 @@ class AlunoController {
 
   async getAlunoById(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
 
       const aluno = await AlunoService.findById(id);
 
@@ -106,7 +106,7 @@ class AlunoController {
 
   async deleteAluno(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
 
       const aluno = await AlunoService.delete(id);
 
@@ -133,7 +133,7 @@ class AlunoController {
 
   async updateAluno(req: MulterRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { nome, email, telefone, turmaId, status } = req.body;
       const files = req.files;
 

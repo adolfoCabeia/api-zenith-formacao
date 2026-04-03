@@ -25,7 +25,8 @@ class CursoController {
 
     async getCursoById(req: Request, resp: Response) {
         try {
-            const curso = await cursoService.findById(req.params.id)
+            const id = req.params.id as string;
+            const curso = await cursoService.findById(id)
             if (!curso) {
                 return resp.status(404).json({ message: "Curso não encontrado" })
             }
@@ -38,7 +39,8 @@ class CursoController {
 
     async updateCurso(req: Request, resp: Response) {
         try {
-            const curso = await cursoService.update(req.params.id, req.body)
+            const id = req.params.id as string;
+            const curso = await cursoService.update(id, req.body)
             resp.status(200).json({ message: "Curso atualizado com sucesso", dados: curso })
         } catch (error) {
             console.log(error)
@@ -48,7 +50,8 @@ class CursoController {
 
     async deleteCurso(req: Request, resp: Response) {
         try {
-            await cursoService.delete(req.params.id)
+            const id = req.params.id as string;
+            await cursoService.delete(id)
             resp.status(200).json({ message: "Curso removido com sucesso" })
         } catch (error) {
             console.log(error)

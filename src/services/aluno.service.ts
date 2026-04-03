@@ -58,6 +58,8 @@ class AlunoService {
       throw new Error('Comprovativo de pagamento é obrigatório');
     }
     
+    const statusValue: StatusAluno = data.status ?? StatusAluno.PENDENTE;
+    
     const aluno = await prisma.aluno.create({
       data: {
         nome: data.nome,
@@ -66,7 +68,7 @@ class AlunoService {
         turmaId: data.turmaId,
         biUrl,
         comprovativoUrl,
-        status: data.status ?? StatusAluno.PENDENTE, 
+        status: statusValue,
       },
       include: {
         turma: {
