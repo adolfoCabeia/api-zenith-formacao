@@ -1,3 +1,5 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import express from 'express'
 import type { Request, Response } from "express";
 //import { GeminiAgent } from './mcp/ai/geminiAgents.js';
@@ -17,6 +19,7 @@ app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true
 }))
+
 app.use(express.json())
 
 app.get('/', (req:Request,resp:Response)=>{
