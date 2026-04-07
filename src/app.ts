@@ -13,13 +13,15 @@ import dashRouter from './routes/dashboard.routes.js';
 //import extratoRouter from './routes/extrato.route.js';
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}))
 app.use(express.json())
 
 app.get('/', (req:Request,resp:Response)=>{
     resp.json({message: "API ZENITH RODANDO"})
 })
-
 
 /* async function main() {
   const agent = new GeminiAgent('./src/mcp/server.ts');
@@ -34,7 +36,6 @@ app.get('/', (req:Request,resp:Response)=>{
     await agent.destroy();
   }
 }
-
 main().catch(console.error); */
 
 app.use('/alunos', alunoRouter)

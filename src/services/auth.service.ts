@@ -99,7 +99,6 @@ class AuthService {
     return user;
   }
 
-  // NOVO: Atualizar perfil (nome, email)
   async updateProfile(userId: string, data: UpdateProfileData) {
     // Verifica se email já existe (se estiver alterando)
     if (data.email) {
