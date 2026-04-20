@@ -51,6 +51,8 @@
     "openai-agents": "^1.1.0",
     "pdfkit": "^0.18.0",
     "pg": "^8.20.0",
+    "rate-limit-redis": "^4.3.1",
+    "redis": "^5.12.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "twilio": "^5.13.1",

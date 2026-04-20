@@ -1,13 +1,17 @@
 import rateLimit from "express-rate-limit";
 
 export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  limit: 5,
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+
   message: {
     message: "Muitas tentativas. Tente novamente mais tarde.",
   },
+
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res, next, options) =>
-		res.status(options.statusCode).send(options.message),
+
+  keyGenerator: (req) => {
+    return `${req.ip}-${req.body.email || "anon"}`;
+  },
 });
