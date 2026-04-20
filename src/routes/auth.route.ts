@@ -2,6 +2,7 @@
 import { Router } from "express";
 import AuthController from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+import { loginLimiter } from "../middleware/rate-limiter.middlewares.js";
 
 const router = Router();
 
@@ -65,7 +66,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/register", AuthController.register);
+router.post("/register",loginLimiter, AuthController.register);
 
 /**
  * @swagger
@@ -114,7 +115,7 @@ router.post("/register", AuthController.register);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/login", AuthController.login);
+router.post("/login", loginLimiter,AuthController.login);
 
 /**
  * @swagger
@@ -192,8 +193,8 @@ router.post("/login", AuthController.login);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/profile", authMiddleware, AuthController.profile);
-router.put("/profile", authMiddleware, AuthController.updateProfile);
+router.get("/profile", loginLimiter,authMiddleware, AuthController.profile);
+router.put("/profile", loginLimiter,authMiddleware, AuthController.updateProfile);
 
 /**
  * @swagger
@@ -246,6 +247,8 @@ router.put("/profile", authMiddleware, AuthController.updateProfile);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put("/password", authMiddleware, AuthController.updatePassword);
+router.put("/password", loginLimiter,authMiddleware, AuthController.updatePassword);
+router.post("/refresh", authMiddleware, AuthController.refresh);
+router.post("/logout", authMiddleware, AuthController.logout)
 
 export default router;

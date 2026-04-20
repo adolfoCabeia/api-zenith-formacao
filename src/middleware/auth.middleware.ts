@@ -1,22 +1,29 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { prisma } from "../config/prismaConfig.js";
 
 export interface AuthRequest extends Request {
   user?: any;
 }
 
-export const authMiddleware = (
+export const authMiddleware = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.accessToken;
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Token não fornecido" });
+  if (!token) {
+    return res.status(401).json({ message: "Não autenticado" });
   }
 
-  const token = authHeader.split(" ")[1];
+  const blackListed = await prisma.blacklistedToken.findFirst({
+    where: { token },
+  });
+
+  if (blackListed) {
+    return res.status(401).json({ message: "Token inválido" });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);

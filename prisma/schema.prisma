@@ -8,12 +8,13 @@ datasource db {
 }
 
 model Usuario {
-  id        String   @id @default(uuid())
-  nome      String
-  email     String   @unique
-  senha     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  id            String         @id @default(uuid())
+  nome          String
+  email         String         @unique
+  senha         String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  refreshTokens refreshToken[]
 }
 
 model Curso {
@@ -21,7 +22,7 @@ model Curso {
   nome         String
   preco        Int
   criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @default(now()) @updatedAt 
+  atualizadoEm DateTime @default(now()) @updatedAt
   turmas       Turma[]
 }
 
@@ -29,29 +30,31 @@ model Turma {
   id         String   @id @default(uuid())
   cursoId    String
   curso      Curso    @relation(fields: [cursoId], references: [id])
-  diaSemana  String[]   
+  diaSemana  String[]
   horario    String
   dataInicio DateTime
   dataFim    DateTime
   capacidade Int
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt 
+  updatedAt  DateTime @default(now()) @updatedAt
   alunos     Aluno[]
 }
+
 model Aluno {
-  id              String   @id @default(uuid())
+  id              String      @id @default(uuid())
   nome            String
-  email           String   @unique
+  email           String      @unique
   telefone        String
   biUrl           String
   comprovativoUrl String
   turmaId         String
-  turma           Turma    @relation(fields: [turmaId], references: [id])
-  status          StatusAluno @default(PENDENTE) 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @updatedAt
+  turma           Turma       @relation(fields: [turmaId], references: [id])
+  status          StatusAluno @default(PENDENTE)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @default(now()) @updatedAt
   pagamentos      Pagamento[]
 }
+
 model Pagamento {
   id        String   @id @default(uuid())
   alunoId   String
@@ -60,7 +63,24 @@ model Pagamento {
   status    String
   data      DateTime @default(now())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt 
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model BlacklistedToken {
+  id        String   @id @default(uuid())
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model refreshToken {
+  id        String   @id @default(uuid())
+  token     String
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user Usuario @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum StatusAluno {

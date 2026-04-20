@@ -388,7 +388,9 @@ export const ModelName = {
   Curso: 'Curso',
   Turma: 'Turma',
   Aluno: 'Aluno',
-  Pagamento: 'Pagamento'
+  Pagamento: 'Pagamento',
+  BlacklistedToken: 'BlacklistedToken',
+  refreshToken: 'refreshToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "curso" | "turma" | "aluno" | "pagamento"
+    modelProps: "usuario" | "curso" | "turma" | "aluno" | "pagamento" | "blacklistedToken" | "refreshToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +780,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BlacklistedToken: {
+      payload: Prisma.$BlacklistedTokenPayload<ExtArgs>
+      fields: Prisma.BlacklistedTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BlacklistedTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BlacklistedTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.BlacklistedTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BlacklistedTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>
+        }
+        findMany: {
+          args: Prisma.BlacklistedTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>[]
+        }
+        create: {
+          args: Prisma.BlacklistedTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>
+        }
+        createMany: {
+          args: Prisma.BlacklistedTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BlacklistedTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.BlacklistedTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>
+        }
+        update: {
+          args: Prisma.BlacklistedTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.BlacklistedTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BlacklistedTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BlacklistedTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.BlacklistedTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BlacklistedTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.BlacklistedTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBlacklistedToken>
+        }
+        groupBy: {
+          args: Prisma.BlacklistedTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BlacklistedTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BlacklistedTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BlacklistedTokenCountAggregateOutputType> | number
+        }
+      }
+    }
+    refreshToken: {
+      payload: Prisma.$refreshTokenPayload<ExtArgs>
+      fields: Prisma.refreshTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.refreshTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.refreshTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.refreshTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.refreshTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>
+        }
+        findMany: {
+          args: Prisma.refreshTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>[]
+        }
+        create: {
+          args: Prisma.refreshTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>
+        }
+        createMany: {
+          args: Prisma.refreshTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.refreshTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.refreshTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>
+        }
+        update: {
+          args: Prisma.refreshTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.refreshTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.refreshTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.refreshTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.refreshTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$refreshTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.RefreshTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRefreshToken>
+        }
+        groupBy: {
+          args: Prisma.refreshTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RefreshTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.refreshTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RefreshTokenCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -882,6 +1032,27 @@ export const PagamentoScalarFieldEnum = {
 } as const
 
 export type PagamentoScalarFieldEnum = (typeof PagamentoScalarFieldEnum)[keyof typeof PagamentoScalarFieldEnum]
+
+
+export const BlacklistedTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BlacklistedTokenScalarFieldEnum = (typeof BlacklistedTokenScalarFieldEnum)[keyof typeof BlacklistedTokenScalarFieldEnum]
+
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1075,6 +1246,8 @@ export type GlobalOmitConfig = {
   turma?: Prisma.TurmaOmit
   aluno?: Prisma.AlunoOmit
   pagamento?: Prisma.PagamentoOmit
+  blacklistedToken?: Prisma.BlacklistedTokenOmit
+  refreshToken?: Prisma.refreshTokenOmit
 }
 
 /* Types for Logging */

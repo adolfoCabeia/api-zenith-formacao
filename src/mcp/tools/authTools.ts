@@ -16,9 +16,9 @@ export const authTools = [
     handler: async ({ email, senha, setContext }: any) => {
       try {
         const result = await AuthService.login(email, senha);
-        
-        setContext({ 
-          token: result.token,
+
+        setContext({
+          token: result.accessToken, 
           userId: result.user.id,
           userName: result.user.nome,
           userEmail: result.user.email,
@@ -42,7 +42,7 @@ export const authTools = [
       }
     }
   },
-  
+
   {
     name: 'register',
     description: 'Registra um novo usuário no sistema',
@@ -88,7 +88,7 @@ export const authTools = [
     },
     handler: async ({ getContext }: any) => {
       const ctx = getContext();
-      
+
       if (!ctx.authenticated || !ctx.userId) {
         return {
           content: [{
@@ -132,7 +132,7 @@ export const authTools = [
     },
     handler: async ({ nome, email, getContext, setContext }: any) => {
       const ctx = getContext();
-      
+
       if (!ctx.authenticated || !ctx.userId) {
         return {
           content: [{
@@ -159,7 +159,7 @@ export const authTools = [
         if (email) updateData.email = email;
 
         const updated = await AuthService.updateProfile(ctx.userId, updateData);
-        
+
         if (email) {
           setContext({ ...ctx, userEmail: email, userName: nome || ctx.userName });
         } else if (nome) {
@@ -198,7 +198,7 @@ export const authTools = [
     },
     handler: async ({ senhaAtual, novaSenha, getContext }: any) => {
       const ctx = getContext();
-      
+
       if (!ctx.authenticated || !ctx.userId) {
         return {
           content: [{
@@ -254,7 +254,7 @@ export const authTools = [
     },
     handler: async ({ getContext }: any) => {
       const ctx = getContext();
-      
+
       if (!ctx.authenticated) {
         return {
           content: [{
@@ -284,7 +284,7 @@ export const authTools = [
     },
     handler: async ({ getContext, setContext }: any) => {
       const ctx = getContext();
-      
+
       if (!ctx.authenticated) {
         return {
           content: [{
@@ -296,9 +296,9 @@ export const authTools = [
 
       const userName = ctx.userName || ctx.userEmail || 'Usuário';
 
-      setContext({ 
-        authenticated: false, 
-        token: null, 
+      setContext({
+        authenticated: false,
+        token: null,
         userId: null,
         userName: null,
         userEmail: null

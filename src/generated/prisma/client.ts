@@ -66,3 +66,13 @@ export type Aluno = Prisma.AlunoModel
  * 
  */
 export type Pagamento = Prisma.PagamentoModel
+/**
+ * Model BlacklistedToken
+ * 
+ */
+export type BlacklistedToken = Prisma.BlacklistedTokenModel
+/**
+ * Model refreshToken
+ * 
+ */
+export type refreshToken = Prisma.refreshTokenModel

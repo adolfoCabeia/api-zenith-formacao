@@ -11,11 +11,12 @@ const options = {
       description: "API para gerenciamento de cursos. Interface moderna e intuitiva.",
       contact: {
         name: "Adolfo Cabeia",
-        email: "contato@seucentro.com",
+        email: "cabeiaadolfo6@gmail.com",
       },
     },
     servers: [
-      { url: "https://api-zenith-formacao.onrender.com", description: "Servidor local" }
+      { url: "https://api-zenith-formacao.onrender.com", description: "Servidor internet" },
+      { url: "http://localhost:3000", description: "Servidor local" },
     ],
   },
   apis: ["./src/routes/*.ts"], 
