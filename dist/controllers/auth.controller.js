@@ -1,4 +1,10 @@
 import AuthService from "../services/auth.service.js";
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/"
+};
 class AuthController {
     async register(req, res) {
         try {
@@ -6,19 +12,7 @@ class AuthController {
             if (!nome || !email || !senha) {
                 return res.status(400).json({ message: "Dados incompletos" });
             }
-            const result = await AuthService.register(nome, email, senha);
-            res.cookie("accessToken", result.accessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 15 * 60 * 1000
-            });
-            res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 7 * 24 * 60 * 60 * 1000
-            });
+            const result = await AuthService.register(nome, email, senha, res);
             res.status(201).json({
                 message: "Usuário criado com sucesso",
                 user: result.user,
@@ -34,19 +28,7 @@ class AuthController {
             if (!email || !senha) {
                 return res.status(400).json({ message: "Dados incompletos" });
             }
-            const result = await AuthService.login(email, senha);
-            res.cookie("accessToken", result.accessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 15 * 60 * 1000
-            });
-            res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 7 * 24 * 60 * 60 * 1000
-            });
+            const result = await AuthService.login(email, senha, res);
             res.json({
                 message: "Login realizado com sucesso",
                 user: result.user,
@@ -62,20 +44,8 @@ class AuthController {
             if (!refreshToken) {
                 return res.status(401).json({ message: "Refresh token não fornecido" });
             }
-            const result = await AuthService.refresh(refreshToken);
-            res.cookie("accessToken", result.newAccessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 15 * 60 * 1000
-            });
-            res.cookie("refreshToken", result.newRefreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 7 * 24 * 60 * 60 * 1000
-            });
-            res.json({ message: "Token atualizado com sucesso" });
+            const result = await AuthService.refresh(refreshToken, res);
+            res.json({ message: result.message });
         }
         catch (error) {
             res.status(401).json({ message: error.message });
@@ -130,16 +100,8 @@ class AuthController {
                 return res.status(400).json({ message: "Dados incompletos" });
             }
             const result = await AuthService.updatePassword(userId, { senhaAtual, novaSenha });
-            res.clearCookie("accessToken", {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict"
-            });
-            res.clearCookie("refreshToken", {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict"
-            });
+            res.clearCookie("accessToken", COOKIE_OPTIONS);
+            res.clearCookie("refreshToken", COOKIE_OPTIONS);
             res.json(result);
         }
         catch (error) {

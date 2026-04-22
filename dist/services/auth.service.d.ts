@@ -8,24 +8,20 @@ interface UpdatePasswordData {
     novaSenha: string;
 }
 declare class AuthService {
-    register(nome: string, email: string, senha: string): Promise<{
+    register(nome: string, email: string, senha: string, res: Response): Promise<{
         user: {
             id: string;
             email: string;
             nome: string;
             createdAt: Date;
         };
-        accessToken: string;
-        refreshToken: `${string}-${string}-${string}-${string}-${string}`;
     }>;
-    login(email: string, senha: string): Promise<{
+    login(email: string, senha: string, res: Response): Promise<{
         user: {
             id: string;
             nome: string;
             email: string;
         };
-        accessToken: string;
-        refreshToken: `${string}-${string}-${string}-${string}-${string}`;
     }>;
     getProfile(userId: string): Promise<{
         id: string;
@@ -44,9 +40,8 @@ declare class AuthService {
     updatePassword(userId: string, data: UpdatePasswordData): Promise<{
         message: string;
     }>;
-    refresh(refreshToken: string): Promise<{
-        newAccessToken: string;
-        newRefreshToken: `${string}-${string}-${string}-${string}-${string}`;
+    refresh(refreshToken: string, res: Response): Promise<{
+        message: string;
     }>;
     logout(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
 }

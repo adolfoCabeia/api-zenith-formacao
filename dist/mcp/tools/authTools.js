@@ -14,9 +14,15 @@ export const authTools = [
         },
         handler: async ({ email, senha, setContext }) => {
             try {
-                const result = await AuthService.login(email, senha);
+                const cookies = {};
+                const mockRes = {
+                    cookie: (name, value, _opts) => {
+                        cookies[name] = value;
+                    }
+                };
+                const result = await AuthService.login(email, senha, mockRes);
                 setContext({
-                    token: result.accessToken,
+                    token: cookies.accessToken || null,
                     userId: result.user.id,
                     userName: result.user.nome,
                     userEmail: result.user.email,
@@ -55,7 +61,10 @@ export const authTools = [
         },
         handler: async ({ nome, email, senha }) => {
             try {
-                const result = await AuthService.register(nome, email, senha);
+                const mockRes = {
+                    cookie: (_name, _value, _opts) => { }
+                };
+                const result = await AuthService.register(nome, email, senha, mockRes);
                 return {
                     content: [{
                             type: 'text',
@@ -224,7 +233,7 @@ export const authTools = [
                 return {
                     content: [{
                             type: 'text',
-                            text: `❌ Erro ao alterar senha: ${error.message}`
+                            text: `Erro ao alterar senha: ${error.message}`
                         }],
                     isError: true
                 };
@@ -253,7 +262,7 @@ export const authTools = [
             return {
                 content: [{
                         type: 'text',
-                        text: `Sessão Ativa\n\n👤 Nome: ${ctx.userName || 'N/A'}\n📧 Email: ${ctx.userEmail || 'N/A'}\n🆔 User ID: ${ctx.userId || 'N/A'}\n🔑 Token: ${ctx.token ? ctx.token.substring(0, 20) + '...' : 'N/A'}`
+                        text: `Sessão Ativa\n\nNome: ${ctx.userName || 'N/A'}\nEmail: ${ctx.userEmail || 'N/A'}\n🆔 User ID: ${ctx.userId || 'N/A'}\n🔑 Token: ${ctx.token ? ctx.token.substring(0, 20) + '...' : 'N/A'}`
                     }]
             };
         }
