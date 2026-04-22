@@ -296,14 +296,14 @@ class AuthService {
       }
     }
     res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict"
+       httpOnly: true,
+    secure: true,
+    sameSite: "none",
     });
     res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict"
+       httpOnly: true,
+    secure: true,
+    sameSite: "none",
     });
 
     return res.json({ message: "Logout realizado com sucesso" });
