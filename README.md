@@ -60,8 +60,8 @@ Antes de começar, tens de ter instalado:
 
 ```bash
 # 1. Clona o repositório
-git clone https://github.com/seu-usuario/softcentro-backend.git
-cd softcentro-backend
+git clone https://github.com/adolfoCabeia/api-zenith-formacao
+cd backend
 
 # 2. Instala as dependências (o Prisma Client é gerado automaticamente via postinstall)
 npm install
